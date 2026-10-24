@@ -2,7 +2,7 @@
 import axios from 'axios';
 
 const api = axios.create({
-  baseURL: 'https://studynest-k2yw.onrender.com/api',
+  baseURL: import.meta.env.VITE_API_URL || (import.meta.env.DEV ? '/api' : 'https://studynest-k2yw.onrender.com/api'),
   headers: {
     'Content-Type': 'application/json'
   }

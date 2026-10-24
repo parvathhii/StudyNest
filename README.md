@@ -52,11 +52,11 @@ Server (`server/.env`):
 - `PORT` — API port, default 5000
 - `MONGODB_URI` — MongoDB connection string
 - `JWT_SECRET` — private random signing secret
-- `CLIENT_URL` — frontend origin, default http://localhost:5173
+- `CLIENT_URL` — allowed frontend origins, comma-separated (for example `http://localhost:5173,https://your-app.vercel.app`)
 - `NODE_ENV` — development or production
 
 Client (`client/.env`):
-- `VITE_API_URL` — API base URL, default http://localhost:5000/api
+- `VITE_API_URL` — API base URL. Local development uses `/api` through the Vite proxy; production defaults to the configured StudyNest API. Set this to your deployed backend URL when deploying elsewhere.
 
 Never commit `.env` files or put private secrets in frontend variables.
 
@@ -70,6 +70,9 @@ Never commit `.env` files or put private secrets in frontend variables.
 - `PATCH/DELETE /api/tasks/:id`
 - `GET/POST /api/sessions`
 - `GET /api/analytics/summary`
+- `GET/POST /api/exams`
+- `GET/POST /api/daily-goals`
+- `GET/POST /api/notes`
 
 All user-owned resources are scoped to the authenticated user.
 
