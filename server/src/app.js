@@ -19,38 +19,53 @@ import {
 } from './middleware/errorMiddleware.js';
 
 const app = express();
+
+// Render runs behind a reverse proxy.
 app.set('trust proxy', 1);
 
-// Security middleware
+// Security middleware.
 app.use(helmet());
 
+// CORS configuration for Vercel and localhost.
+const allowedOrigins = new Set([
+  'http://localhost:5173',
+  'http://127.0.0.1:5173',
+  'https://studynest-gules.vercel.app',
+  ...(process.env.CLIENT_URL || '')
+    .split(',')
+    .map((origin) => origin.trim())
+    .filter(Boolean),
+]);
 
-
-app.use(cors({
-  origin: [
-    'http://localhost:5173',
-    'http://127.0.0.1:5173',
-    'https://studynest-gules.vercel.app'
-  ],
-  credentials: true
-}));
-
-
-// Parse incoming JSON
-app.use(express.json({ limit: '20kb' }));
-
-// Authentication rate limiter
 app.use(
-  '/api/auth',
-  rateLimit({
-    windowMs: 15 * 60 * 1000,
-    limit: 100,
-    standardHeaders: 'draft-7',
-    legacyHeaders: false,
+  cors({
+    origin(origin, callback) {
+      // Allow requests without an Origin header, such as health checks.
+      if (!origin || allowedOrigins.has(origin)) {
+        return callback(null, true);
+      }
+
+      return callback(new Error('Origin not allowed by CORS'));
+    },
+    methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
+    allowedHeaders: ['Content-Type', 'Authorization'],
   })
 );
 
-// Health check
+// Parse JSON request bodies.
+app.use(express.json({ limit: '20kb' }));
+
+// Rate limiting for authentication endpoints.
+const authLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000,
+  limit: 100,
+  standardHeaders: true,
+  legacyHeaders: false,
+});
+
+app.use('/api/auth', authLimiter);
+
+// Health check.
 app.get('/api/health', (_req, res) => {
   res.json({
     status: 'ok',
@@ -58,7 +73,7 @@ app.get('/api/health', (_req, res) => {
   });
 });
 
-// Application routes
+// API routes.
 app.use('/api/auth', authRoutes);
 app.use('/api/subjects', subjectRoutes);
 app.use('/api/tasks', taskRoutes);
@@ -66,10 +81,11 @@ app.use('/api/sessions', sessionRoutes);
 app.use('/api/analytics', analyticsRoutes);
 app.use('/api/exams', examRoutes);
 app.use('/api/daily-goals', dailyGoalRoutes);
-app.use('/api/notes', subjectNoteRoutes);
+app.use('/api/subject-notes', subjectNoteRoutes);
 
-// Error handling
+// Error handling.
 app.use(notFound);
 app.use(errorHandler);
 
 export default app;
+
