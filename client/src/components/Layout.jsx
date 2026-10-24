@@ -1,5 +1,5 @@
 import { Link, NavLink, Outlet, useNavigate } from 'react-router-dom';
-import { BookOpen, LayoutDashboard, ListTodo, LibraryBig, Timer, ChartNoAxesColumn, CalendarDays, LogOut, Menu, Search, Bell, Target, FileText } from 'lucide-react';
+import { BookOpen, LayoutDashboard, ListTodo, LibraryBig, Timer, ChartNoAxesColumn, CalendarDays, LogOut, Menu, Search, Bell, Target } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { useAuth } from '../context/AuthContext.jsx';
 import { api } from '../services/api.js';
@@ -7,7 +7,6 @@ const links = [
   { to: '/app', label: 'Overview', icon: LayoutDashboard, end: true },
   { to: '/app/tasks', label: 'Tasks', icon: ListTodo },
   { to: '/app/subjects', label: 'Subjects', icon: LibraryBig },
-  { to: '/app/notes', label: 'Subject notes', icon: FileText },
   { to: '/app/exams', label: 'Exams', icon: CalendarDays },
   { to: '/app/goals', label: 'Daily goals', icon: Target },
   { to: '/app/timer', label: 'Focus timer', icon: Timer },
@@ -77,8 +76,7 @@ export default function Layout() {
     const timer = window.setTimeout(async () => {
       setSearchLoading(true);
       try {
-        const [noteResponse, taskResponse, subjectResponse, examResponse] = await Promise.all([
-          api.get('/notes', { params: { search: term } }),
+        const [taskResponse, subjectResponse, examResponse] = await Promise.all([
           api.get('/tasks'),
           api.get('/subjects'),
           api.get('/exams'),
@@ -87,7 +85,6 @@ export default function Layout() {
         const normalized = term.toLocaleLowerCase();
         const matches = (value) => String(value || '').toLocaleLowerCase().includes(normalized);
         const resultItems = [
-          ...(noteResponse.data?.notes || []).map((note) => ({ id: `note-${note._id}`, type: 'Note', title: note.title, detail: note.subject?.name || 'Subject note', to: '/app/notes' })),
           ...(taskResponse.data?.tasks || []).filter((task) => matches(task.title) || matches(task.notes)).map((task) => ({ id: `task-${task._id}`, type: 'Task', title: task.title, detail: task.subject?.name || 'Study task', to: '/app/tasks' })),
           ...(subjectResponse.data?.subjects || []).filter((subject) => matches(subject.name) || matches(subject.description)).map((subject) => ({ id: `subject-${subject._id}`, type: 'Subject', title: subject.name, detail: subject.description || 'Subject', to: '/app/subjects' })),
           ...(examResponse.data?.exams || []).filter((exam) => matches(exam.title) || matches(exam.subject?.name)).map((exam) => ({ id: `exam-${exam._id}`, type: 'Exam', title: exam.title, detail: exam.subject?.name || 'Exam plan', to: '/app/exams' })),

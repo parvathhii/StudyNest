@@ -72,7 +72,6 @@ Never commit `.env` files or put private secrets in frontend variables.
 - `GET /api/analytics/summary`
 - `GET/POST /api/exams`
 - `GET/POST /api/daily-goals`
-- `GET/POST /api/notes`
 
 All user-owned resources are scoped to the authenticated user.
 

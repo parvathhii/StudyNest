@@ -11,8 +11,7 @@ import TimerPage from './pages/TimerPage.jsx';
 import Analytics from './pages/Analytics.jsx';
 import Exams from './pages/Exams.jsx';
 import DailyGoals from './pages/DailyGoals.jsx';
-import SubjectNotes from './pages/SubjectNotes.jsx';
 export default function App(){
  const { user } = useAuth();
- return <Routes><Route path="/" element={<Landing/>}/><Route path="/login" element={<AuthPage/>}/><Route path="/register" element={<AuthPage mode="register"/>}/><Route element={<ProtectedRoute/>}><Route path="/app" element={<Layout/>}><Route index element={<Dashboard/>}/><Route path="tasks" element={<Tasks/>}/><Route path="subjects" element={<Subjects/>}/><Route path="notes" element={<SubjectNotes/>}/><Route path="exams" element={<Exams/>}/><Route path="goals" element={<DailyGoals/>}/><Route path="timer" element={<TimerPage/>}/><Route path="analytics" element={<Analytics/>}/></Route></Route><Route path="*" element={<Navigate to={user?'/app':'/'} replace/>}/></Routes>;
+ return <Routes><Route path="/" element={<Landing/>}/><Route path="/login" element={<AuthPage/>}/><Route path="/register" element={<AuthPage mode="register"/>}/><Route element={<ProtectedRoute/>}><Route path="/app" element={<Layout/>}><Route index element={<Dashboard/>}/><Route path="tasks" element={<Tasks/>}/><Route path="subjects" element={<Subjects/>}/><Route path="exams" element={<Exams/>}/><Route path="goals" element={<DailyGoals/>}/><Route path="timer" element={<TimerPage/>}/><Route path="analytics" element={<Analytics/>}/></Route></Route><Route path="*" element={<Navigate to={user?'/app':'/'} replace/>}/></Routes>;
 }

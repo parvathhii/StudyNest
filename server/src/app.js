@@ -11,7 +11,6 @@ import sessionRoutes from './routes/sessionRoutes.js';
 import analyticsRoutes from './routes/analyticsRoutes.js';
 import examRoutes from './routes/examRoutes.js';
 import dailyGoalRoutes from './routes/dailyGoalRoutes.js';
-import subjectNoteRoutes from './routes/subjectNoteRoutes.js';
 
 import {
   notFound,
@@ -73,10 +72,6 @@ app.use('/api/sessions', sessionRoutes);
 app.use('/api/analytics', analyticsRoutes);
 app.use('/api/exams', examRoutes);
 app.use('/api/daily-goals', dailyGoalRoutes);
-
-// Support both the existing and shorter notes API paths.
-app.use('/api/subject-notes', subjectNoteRoutes);
-app.use('/api/notes', subjectNoteRoutes);
 
 app.use(notFound);
 app.use(errorHandler);
