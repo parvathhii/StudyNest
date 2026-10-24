@@ -23,12 +23,14 @@ const app = express();
 // Security middleware
 app.use(helmet());
 
-// Frontend connection
-app.use(
-  cors({
-    origin: process.env.CLIENT_URL || 'http://localhost:5173',
-  })
-);
+
+app.use(cors({
+  origin: [
+    'http://localhost:5173',
+    'https://studynest-gules.vercel.app'
+  ],
+  credentials: true
+}));
 
 // Parse incoming JSON
 app.use(express.json({ limit: '20kb' }));
