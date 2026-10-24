@@ -29,7 +29,13 @@ app.use(cors({
     'http://localhost:5173',
     'https://studynest-gules.vercel.app'
   ],
-  credentials: true
+  
+    if (!origin || allowedOrigins.includes(origin)) {
+      callback(null, true);
+    } else {
+      callback(new Error('Origin not allowed by CORS'));
+    }
+  }
 }));
 
 // Parse incoming JSON
