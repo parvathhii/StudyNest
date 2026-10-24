@@ -20,13 +20,10 @@ import {
 
 const app = express();
 
-// Render runs behind a reverse proxy.
 app.set('trust proxy', 1);
 
-// Security middleware.
 app.use(helmet());
 
-// CORS configuration for Vercel and localhost.
 const allowedOrigins = new Set([
   'http://localhost:5173',
   'http://127.0.0.1:5173',
@@ -40,7 +37,6 @@ const allowedOrigins = new Set([
 app.use(
   cors({
     origin(origin, callback) {
-      // Allow requests without an Origin header, such as health checks.
       if (!origin || allowedOrigins.has(origin)) {
         return callback(null, true);
       }
@@ -52,10 +48,8 @@ app.use(
   })
 );
 
-// Parse JSON request bodies.
 app.use(express.json({ limit: '20kb' }));
 
-// Rate limiting for authentication endpoints.
 const authLimiter = rateLimit({
   windowMs: 15 * 60 * 1000,
   limit: 100,
@@ -65,7 +59,6 @@ const authLimiter = rateLimit({
 
 app.use('/api/auth', authLimiter);
 
-// Health check.
 app.get('/api/health', (_req, res) => {
   res.json({
     status: 'ok',
@@ -73,7 +66,6 @@ app.get('/api/health', (_req, res) => {
   });
 });
 
-// API routes.
 app.use('/api/auth', authRoutes);
 app.use('/api/subjects', subjectRoutes);
 app.use('/api/tasks', taskRoutes);
@@ -81,11 +73,14 @@ app.use('/api/sessions', sessionRoutes);
 app.use('/api/analytics', analyticsRoutes);
 app.use('/api/exams', examRoutes);
 app.use('/api/daily-goals', dailyGoalRoutes);
-app.use('/api/subject-notes', subjectNoteRoutes);
 
-// Error handling.
+// Support both the existing and shorter notes API paths.
+app.use('/api/subject-notes', subjectNoteRoutes);
+app.use('/api/notes', subjectNoteRoutes);
+
 app.use(notFound);
 app.use(errorHandler);
 
 export default app;
+
 
